@@ -1,7 +1,6 @@
 from print_screen import *
 from PIL import Image
 from adb import Screenshot
-import pytesseract
 import re
 from image_deal import *
 from myfont import *
@@ -29,14 +28,14 @@ import threading
 
 # for x in range(71, 76) :9
 #     img2 = Image.open(str(x) + '.png')
-#     # img2 = img2.transpose(Image.ROTATE_90)        
+#     # img2 = img2.transpose(Image.ROTATE_90)
 #     img2 = cut_image(img2, (0, 51,  376, 484))  # 消息框
-     
+
 #     get_inf(img2)
 # 9
-# img2 = Image.open( '72.png') 
+# img2 = Image.open( '72.png')
 #     # img2 = img2.transpose(Image.ROTATE_90)           dian
-# get_inf(img2) 
+# get_inf(img2)
 
 
 ##########################################################main
@@ -46,14 +45,14 @@ import threading
 # for x in range(90, 96) :
 #     img2 = Image.open(str(x) +'.png')
 #     #     img2 = Image.open(str(x) + '.png')
-#     img2 = img2.transpose(Image.ROTATE_90)  
+#     img2 = img2.transpose(Image.ROTATE_90)
 #     print(get_inf(img2, myfont, myfont_chinese))
 
 
 # img2 = Image.open('80.png')
 # print(get_army_inf(img2, myfont))
 
-# img2 = Image.open('ref_2.png')   
+# img2 = Image.open('ref_2.png')
 # print(get_inf(img2, myfont, myfont_chinese))
 
 
@@ -88,7 +87,7 @@ import threading
 # cmd2=r"adb pull /sdcard/96.png C:\Users\Administrator\Desktop\LB_LAST"                        #命令2：将图片保存到电脑 d:/3.png为要保存到电脑的路径
 # screen=Screenshot()
 # screen.screen(cmd1)
-# screen.saveComputer(cmd2) 
+# screen.saveComputer(cmd2)
 
 # for x in range(60, 68) :
 #     img2 = Image.open(str(x) + '.png')
@@ -103,13 +102,13 @@ class event_list() :
     lock = None    #申请一个线程锁
     def __init__(self):
         self.lock = threading.Lock()
-        return 
+        return
 
     def appent_event(self, event) :
         self.lock.acquire()
         self.my_event_list.append(event)
         self.lock.release()
- 
+
 
     def pop_event(self, num = 0) :
         self.lock.acquire()
@@ -154,7 +153,7 @@ def build_event_() :
     if not isindex() :
         #  error deal
         print("error: this is not index!")
-    Click(box[1] + 37, box[2] + 400)   
+    Click(box[1] + 37, box[2] + 400)
     time.sleep(0.5)
     img = screenshort_new("screenshort.png")
     army_list = get_army_inf(img, myfont)
@@ -165,7 +164,7 @@ def build_event_() :
     #19个mm ，15 个气球 9个法师 3条龙 2个皮卡
     print(request_init)
     build_all(box, request_init)
-    
+
 
     # Click(box[0] + 393, box[1] + 240)
     print("build_event_")

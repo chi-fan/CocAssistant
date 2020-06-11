@@ -1,12 +1,11 @@
 from PIL import Image
 from myfont import *
 import re
-import pytesseract
 from myfont_chinese import *
 
 cut_width  = 374
 cut_heigh  = 478
-ref_width  =  374 
+ref_width  =  374
 ref_heigh  = 112
 
 # 处理图像
@@ -21,7 +20,7 @@ def deal_image(image, logic_expression) :
     for y in range(img.size[1]):
         for x in range(img.size[0]):
             # print(pixdata[x,y])
-            if logic_expression(pixdata[x, y][0], pixdata[x, y][1], pixdata[x, y][2]): 
+            if logic_expression(pixdata[x, y][0], pixdata[x, y][1], pixdata[x, y][2]):
                 pixdata[x, y] = (0, 0, 0)
             else:
                 pixdata[x, y] = (255, 255, 255)
@@ -71,7 +70,7 @@ def get_ref_img(img, num) :
 
 def deal_str(deal_code) :
     Request = {
-     'str':None,      
+     'str':None,
      'army':{
       'max':0,
      'fill_in':0,
@@ -86,17 +85,17 @@ def deal_str(deal_code) :
      },
      'position':(0, 0)
     }
-     
+
     temp_number = re.findall(r'\d+', deal_code)
-        
+
     Request['army']['fill_in'] = temp_number[0]
     Request['army']['max'] = temp_number[1]
     if len(temp_number) > 3 :
         Request['spells']['fill_in'] = temp_number[2]
-        Request['spells']['max'] = temp_number[3]  
+        Request['spells']['max'] = temp_number[3]
     if  len(temp_number) > 5 :
         Request['device']['fill_in'] = temp_number[4]
-        Request['device']['max'] = temp_number[5]          
+        Request['device']['max'] = temp_number[5]
     return Request
 
 
@@ -119,7 +118,7 @@ def get_inf(img, myfont, myfont_chinese) :
     #     print(index)
 
     # 获得按钮所在的单元
-    rang_list = [] 
+    rang_list = []
     for index in button_list :
         i = 0
         while i < len(hor_list) :
@@ -168,8 +167,8 @@ def cut_blob(image) :
     img = Image.new('RGB', (width, height), (0, 0, 0))
     img.paste(image, (0, 0))
     img = img.convert("RGB")
-    pixdata = img.load()   
-    
+    pixdata = img.load()
+
     for x in range(img.size[0]) :
         if pixdata[x, 0][0] == 0 :
             for y in range(img.size[1]) :
@@ -187,7 +186,7 @@ def cut_blob(image) :
     return img
 
 
-def get_army_inf(img, myfont) : 
+def get_army_inf(img, myfont) :
     img2 = cut_image(img, (97, 69, 170, 90))
     img2 = deal_image(img2, lambda x, y, z : x >= 220  and y >= 220 and z >= 220  )
     img2 = cut_blob(img2)
@@ -209,7 +208,7 @@ def get_army_inf(img, myfont) :
     return army_all
 
 
-def get_army_inf2(img, myfont) : 
+def get_army_inf2(img, myfont) :
     img2 = cut_image(img, (72, 60, 139, 76))
     img2 = deal_image(img2, lambda x, y, z : x >= 220  and y >= 220 and z >= 220  )
     deal_code = myfont.get_string(img2)
@@ -230,7 +229,7 @@ def get_army_inf2(img, myfont) :
 #     # 遍历图片的像素点 找目标点
 #     for y in range(img.size[1]):
 #         for x in range(img.size[0]):
-#             if pixdata[x, y] == (pointarr[0][2], pointarr[0][3], pointarr[0][4]):   
+#             if pixdata[x, y] == (pointarr[0][2], pointarr[0][3], pointarr[0][4]):
 #                 for point in pointarr:
 #                     if x + point[0] >= img.size[0] or y + point[1] >= img.size[1] :
 #                       break
@@ -240,7 +239,7 @@ def get_army_inf2(img, myfont) :
 #                       mypoint = (x, y)
 #                 if mypoint != None:  # 找到点， 跳出x轴循环
 #                     break
-        
+
 #         if mypoint != None: # 找到点， 跳出y轴循环
 #             break
 
@@ -255,7 +254,7 @@ def get_army_inf2(img, myfont) :
 # total = 0
 # for value in data:
 #     total += (value - average) ** 2
- 
+
 # stddev = math.sqrt(total/len(data))
 # print(stddev)
 
@@ -290,12 +289,12 @@ def get_army_inf2(img, myfont) :
 # img = img.convert("RGB")
 # pixdata = img.load()
 # point = (902, 480)
-# pointarr = getpointarr(point, pixdata) 
+# pointarr = getpointarr(point, pixdata)
 
 
 # img2 = Image.open('2.png')
 # img2 = img2.transpose(Image.ROTATE_90)
-# print(ifpoint(img2, point, pointarr)) 
+# print(ifpoint(img2, point, pointarr))
 
 
 # box =  find_box_window()
