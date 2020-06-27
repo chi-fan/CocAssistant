@@ -1,7 +1,8 @@
-# tessarect  我训练了半天还是不好用  所以自己写一个
 from PIL import Image
 import os
-from jsonFile import *
+import jsonFile as jF
+
+orcFile = "myOrc.json"     # armyChinese.json
 
 class myOpticalCharacterRecognition():
     fonts = None
@@ -9,9 +10,9 @@ class myOpticalCharacterRecognition():
     main_font = None
     m_jsonFile = None
     def __init__(self):
-        self.m_jsonObject = jsonFile(os.getcwd() + "\\armyChinese.json")
-        self.main_font = self.m_jsonObject.jsonGetFile()
-        self.fonts = self.main_font[1]
+        self.m_jsonFile = jF.jsonFile(os.getcwd() + "\\" + orcFile)
+        self.main_font = self.m_jsonFile.jsonGetFile()
+        self.fonts = self.main_font
 
     def getString(self, img):
         img = img.convert("RGB")
@@ -154,9 +155,9 @@ class myOpticalCharacterRecognition():
 
 
 muOcr = myOpticalCharacterRecognition()
-# # print(muOcr.fonts)
-# img = Image.open(os.getcwd() + "\\picture\\0.png")
-# print(muOcr.getString(img))
+# print(muOcr.fonts)
+img = Image.open(os.getcwd() + "\\picture\\0.png")
+print(muOcr.getString(img))
 
 
 

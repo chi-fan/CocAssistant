@@ -1,15 +1,25 @@
 import json
+from pathlib import Path
 
 class jsonFile():
+    '''从json文件中获得json对象。'''
+
     fileName = None
     def __init__(self, fileName):
+        f = Path(fileName)
+        if not f.exists() :
+            with open(fileName, "w", encoding='utf-8') as f:
+                f.write("{}")
         self.fileName = fileName
 
     def jsonGetFile(self):
         with open(self.fileName, "r", encoding='utf-8') as f:
-            data2 = json.loads(f.read())    # load的传入参数为字符串类型
-        return data2
+            jsonObject = json.loads(f.read())    # load的传入参数为字符串类型
+        return jsonObject
 
     def jsonSaveFile(self, jsonObject) :
         with open(self.fileName, "w", encoding='utf-8') as f:
             f.write(json.dumps(jsonObject))
+
+instJsonFile = jsonFile("myOrc.json")
+print(instJsonFile.jsonGetFile())
