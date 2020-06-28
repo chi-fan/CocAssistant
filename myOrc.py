@@ -2,32 +2,32 @@ from PIL import Image
 import os
 import jsonFile as jF
 
-orcFile = "myOrc.json"     # armyChinese.json
-
-class myOpticalCharacterRecognition():
-    fonts = None
-    index = None
-    main_font = None
+class myOpticalCharacterRecognition() :
+    orcFile = "myOrc.json"     # armyChinese.json
+    allFonts = None
     m_jsonFile = None
+    m_fontBoxes = None
     def __init__(self):
-        self.m_jsonFile = jF.jsonFile(os.getcwd() + "\\" + orcFile)
-        self.main_font = self.m_jsonFile.jsonGetFile()
-        self.fonts = self.main_font
+        self.m_jsonFile = jF.jsonFile(os.getcwd() + "\\" + self.orcFile)
+        self.allFonts = self.m_jsonFile.jsonGetFile()
+        self.m_fontBoxes = fontBoxes()
+        if not 'finish' in self.allFonts.keys() :
+            self.allFonts['finish'] = []
+            self.allFonts['unFinish'] = []
+            self.m_jsonFile.jsonSaveFile(self.allFonts)
 
     def getString(self, img):
         img = img.convert("RGB")
         pixdata = img.load()
-        my_string = ''
-        size = (img.size[0], img.size[1])
-        boxs, blackpoint = self.get_char_point_v(pixdata, size)
-        boxs =  self.get_char_point_h(pixdata, size, boxs, blackpoint)
-        for box in boxs :
-            my_string =  my_string + self.getChar(box, pixdata)
-        return my_string
+        stringInPicture = ''
+        boxes = self.m_fontBoxes.getFontBoxes(pixdata, img.size)
+        for box in boxes :
+            stringInPicture =  stringInPicture + self.getChar(box, pixdata)
+        return stringInPicture
 
     def getChar(self, box, pixdata):
-        w = box[2] - box[0] + 1
-        h = box[3] - box[1] + 1
+        width = box[2] - box[0] + 1
+        length = box[3] - box[1] + 1
         # 将像素点编辑成数组
         points = []
         for y in range(box[1], box[3] + 1) :
@@ -38,20 +38,27 @@ class myOpticalCharacterRecognition():
                 else :
                     point.append(0)
             points.append(point)
-        # 比较查找数组
-        for font in self.fonts :
-            if w == font['box_size'][0] and h == font['box_size'][1] :
-                if self.comparaChar(points ,font['points'], (w, h)) :
+
+        for font in self.allFonts['finish'] :
+            if [width, length] == font['boxSize'] :
+                if self.comparaChar(points, font['points'], (width, length)) :
                     return font['value']
                 else :
                     continue
-        # 没有这个字
-        return self.addChar([w, h], points)
 
-    def comparaChar(self, src_points, dir_points, size):
+        for font in self.allFonts['unFinish'] :
+            if [width, length] == font['boxSize'] :
+                if self.comparaChar(points, font['points'], (width, length)) :
+                    return ''
+                else :
+                    continue
+
+        return self.addChar((width, length), points)
+
+    def comparaChar(self, sourcePoints, destinationPoints, size) :   #待优化算法
         for y in range(size[1]) :
             for x in range(size[0]) :
-                if src_points[y][x] != dir_points[y][x] :
+                if sourcePoints[y][x] != destinationPoints[y][x] :
                     return False
         return True
 
@@ -61,7 +68,7 @@ class myOpticalCharacterRecognition():
         pixdata = img.load()
         for y in range(size[1]) :
             for x in range(size[0]) :
-                if points[y][x] == 1 :   # 黑点
+                if points[y][x] == 1 :
                     pixdata[x, y] = (0, 0 ,0)
                 else :
                     pixdata[x, y] = (255, 255, 255)
@@ -69,17 +76,25 @@ class myOpticalCharacterRecognition():
         char = input('输入此图片的值：')
         temp = {
             "value" : char,
-            "box_size" : size,
+            "boxSize" : size,
             "points" : points,
         }
-        self.fonts.append(temp)
-        self.main_font[self.index] = self.fonts
-        self.m_jsonFile.jsonSaveFile(self.main_font)
+        if char :
+            self.allFonts['finish'].append(temp)
+        else :
+            self.allFonts['unFinish'].append(temp)
+        self.m_jsonFile.jsonSaveFile(self.allFonts)
         return char
 
-    def get_char_point_h(self, pixdata, size, boxarr, blackpoint) :
-        boxs = []
-        for  box in boxarr:
+class fontBoxes() :
+    ''' 将图片中的字符提取出一个像素点集合'''
+    def getFontBoxes(self, pixdata, size) :
+        boxes, blackpoint = self.getCharPointV(pixdata, size)
+        return self.getCharPointH(pixdata, size, boxes, blackpoint)
+
+    def getCharPointH(self, pixdata, size, boxArray, blackpoint) :
+        boxes = []
+        for  box in boxArray:
             min = None
             max = None
             for y in range(size[1]) :
@@ -97,13 +112,12 @@ class myOpticalCharacterRecognition():
                         break
                 if max != None :
                     break
-            boxs.append((blackpoint[box[0]], min ,blackpoint[box[1]], max))
-        # print(boxs)
-        return boxs
+            boxes.append((blackpoint[box[0]], min ,blackpoint[box[1]], max))
+        return boxes
 
-    def get_char_point_v(self, pixdata, size) :
+    def getCharPointV(self, pixdata, size) :
         blackpoint = []
-        boxs = []
+        boxes = []
         for x in range(size[0]) :
             for  y in range(size[1]):
                 if pixdata[x, y][0] == 0 :   # 找到黑色像素点
@@ -113,46 +127,12 @@ class myOpticalCharacterRecognition():
         while True:
             for x in range(1, 200):
                 if  temp + x >= len(blackpoint) or blackpoint[temp + x] != blackpoint[temp] + x:
-                    boxs.append((temp, temp + x - 1))
+                    boxes.append((temp, temp + x - 1))
                     temp = temp + x
                     break
             if temp >= len(blackpoint) : # 到头了 结束循环
                 break
-        return boxs, blackpoint
-
-    def get_char_point(self, img) :
-        img = img.convert("RGB")
-        pixdata = img.load()
-        size = (img.size[0], img.size[1])
-        boxs, blackpoint = self.get_char_point_v(pixdata, size)
-        boxs =  self.get_char_point_h(pixdata, size, boxs, blackpoint)
-        return self.convert_json(pixdata, size, boxs)
-
-
-    def convert_json(self, pixdata, size, boxs) :
-        arm_num = []
-        for box in boxs :
-            points = []
-            for y in range(box[1], box[3] + 1) :
-                point = []
-                for x in range(box[0], box[2] + 1) :
-                    if pixdata[x, y][0] == 0 :
-                        point.append(1)
-                    else :
-                        point.append(0)
-                points.append(point)
-            temp = {
-                "value" : None,
-                "box_size" : [box[2] - box[0] + 1, box[3]- box[1] + 1],
-                "points" : points,
-            }
-            arm_num.append(temp)
-
-        my_font = {"army" : arm_num}
-        # print(my_font)
-        return my_font
-
-
+        return boxes, blackpoint
 
 muOcr = myOpticalCharacterRecognition()
 # print(muOcr.fonts)
