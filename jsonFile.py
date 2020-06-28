@@ -14,12 +14,9 @@ class jsonFile():
 
     def jsonGetFile(self):
         with open(self.fileName, "r", encoding='utf-8') as f:
-            jsonObject = json.loads(f.read())    # load的传入参数为字符串类型
+            jsonObject = json.loads(f.read())
         return jsonObject
 
     def jsonSaveFile(self, jsonObject) :
         with open(self.fileName, "w", encoding='utf-8') as f:
             f.write(json.dumps(jsonObject))
-
-instJsonFile = jsonFile("myOrc.json")
-print(instJsonFile.jsonGetFile())
