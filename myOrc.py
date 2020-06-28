@@ -135,7 +135,6 @@ class fontBoxes() :
         return boxes, blackpoint
 
 muOcr = myOpticalCharacterRecognition()
-# print(muOcr.fonts)
 img = Image.open(os.getcwd() + "\\picture\\0.png")
 print(muOcr.getString(img))
 
