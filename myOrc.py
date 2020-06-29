@@ -89,50 +89,79 @@ class myOpticalCharacterRecognition() :
 class fontBoxes() :
     ''' 将图片中的字符提取出一个像素点集合'''
     def getFontBoxes(self, pixdata, size) :
-        boxes, blackpoint = self.getCharPointV(pixdata, size)
-        return self.getCharPointH(pixdata, size, boxes, blackpoint)
+        boxesX, blackpointX, boxesY, blackpointY = self.getCharBoundary(pixdata, size)
+        return self.getCharPoint(pixdata, size, boxesX, blackpointX, boxesY, blackpointY)
 
-    def getCharPointH(self, pixdata, size, boxArray, blackpoint) :
+    def getCharBoundary(self, pixdata, size) :
+        blackpointX = []
+        boxesX = []
+        blackpointY = []
+        boxesY = []
+
+        for y in range(size[1]) :
+            for  x in range(size[0]):
+                if pixdata[x, y][0] == 0  :
+                    blackpointY.append(y)
+                    break
+        pointY = 0
+        y = 0
+        while pointY < len(blackpointY) :
+            if pointY + y >= len(blackpointY) or blackpointY[pointY + y] != blackpointY[pointY] + y:
+                boxesY.append((pointY, pointY + y - 1))
+                pointY = pointY + y
+                y = 0
+                continue
+            y += 1
+
+        for boxY in boxesY :
+            boxX = []
+            blackpoint = []
+            for x in range(size[0]) :
+                for  y in range(blackpointY[boxY[0]], blackpointY[boxY[1]]):
+                    if pixdata[x, y][0] == 0 :
+                        blackpoint.append(x)
+                        break
+            pointX = 0
+            x = 0
+            while pointX < len(blackpoint) :
+                if pointX + x >= len(blackpoint) or blackpoint[pointX + x] != blackpoint[pointX] + x:
+                    boxX.append((pointX, pointX + x - 1))
+                    pointX = pointX + x
+                    x = 0
+                    continue
+                x += 1
+            boxesX.append(boxX)
+            blackpointX.append(blackpoint)
+        return boxesX, blackpointX, boxesY, blackpointY
+
+    def getCharPoint(self, pixdata, size, boxesX, blackpointX, boxesY, blackpointY) :
         boxes = []
-        for  box in boxArray:
-            min = None
-            max = None
-            for y in range(size[1]) :
-                for x in range(blackpoint[box[0]], blackpoint[box[1]] + 1) :
-                    if pixdata[x, y][0] == 0 :
-                        min = y
+        for indexY in range(len(boxesY)) :
+            for boxX in boxesX[indexY] :
+                min = None
+                max = None
+                for y in range(blackpointY[boxesY[indexY][0]], blackpointY[boxesY[indexY][1]]) :
+                    for x in range(blackpointX[indexY][boxX[0]], blackpointX[indexY][boxX[1]] + 1) :
+                        if pixdata[x, y][0] == 0 :
+                            min = y
+                            break
+                    if min != None :
                         break
-                if min != None :
-                    break
+                if min == None :
+                    continue
 
-            for y in range(size[1] - 1, 0, -1) :
-                for x in range(blackpoint[box[0]], blackpoint[box[1]] + 1) :
-                    if pixdata[x, y][0] == 0 :
-                        max = y
+                for y in range(blackpointY[boxesY[indexY][1]], blackpointY[boxesY[indexY][0]], -1) :
+                    for x in range(blackpointX[indexY][boxX[0]], blackpointX[indexY][boxX[1]] + 1) :
+                        if pixdata[x, y][0] == 0 :
+                            max = y
+                            break
+                    if max != None :
                         break
-                if max != None :
+                if (blackpointX[indexY][boxX[1]] - blackpointX[indexY][boxX[0]]) * (max - min) < 5 :
                     break
-            boxes.append((blackpoint[box[0]], min ,blackpoint[box[1]], max))
+                boxes.append((blackpointX[indexY][boxX[0]], min ,blackpointX[indexY][boxX[1]], max))
         return boxes
 
-    def getCharPointV(self, pixdata, size) :
-        blackpoint = []
-        boxes = []
-        for x in range(size[0]) :
-            for  y in range(size[1]):
-                if pixdata[x, y][0] == 0 :   # 找到黑色像素点
-                    blackpoint.append(x)
-                    break
-        temp = 0
-        while True:
-            for x in range(1, 200):
-                if  temp + x >= len(blackpoint) or blackpoint[temp + x] != blackpoint[temp] + x:
-                    boxes.append((temp, temp + x - 1))
-                    temp = temp + x
-                    break
-            if temp >= len(blackpoint) : # 到头了 结束循环
-                break
-        return boxes, blackpoint
 
 muOcr = myOpticalCharacterRecognition()
 img = Image.open(os.getcwd() + "\\picture\\0.png")

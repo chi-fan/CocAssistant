@@ -17,20 +17,20 @@ class event_list() :
         self.lock = threading.Lock()
         return
 
-    def appent_event(self, event) :
+    def appendEvent(self, event) :
         self.lock.acquire()
         self.my_event_list.append(event)
         self.lock.release()
 
 
-    def pop_event(self, num = 0) :
+    def popEvent(self, num = 0) :
         self.lock.acquire()
         if len(self.my_event_list) == 0 :
             return
         self.my_event_list.pop(num)
         self.lock.release()
 
-    def run_evet(self) :
+    def runEvent(self) :
         print("____________________________________________________________________\n")
         print("                               吃饭和island的coc辅助工具")
         print("____________________________________________________________________\n")
@@ -42,8 +42,8 @@ class event_list() :
                 print(self.my_event_list[0][0])
                 self.my_event_list[0][1]()
                 if self.my_event_list[0][2] != None :
-                    self.appent_event(self.my_event_list[0][2])
-                self.pop_event()
+                    self.appendEvent(self.my_event_list[0][2])
+                self.popEvent()
 
 
 request_init = None
@@ -92,7 +92,7 @@ def coloct_event_() :
 
 
 def coloct_event_test() :
-    timer = threading.Timer(6, lambda  :  my_evet.appent_event(coloct_event))
+    timer = threading.Timer(6, lambda  :  my_evet.appendEvent(coloct_event))
     timer.start()
     return
 
@@ -109,9 +109,9 @@ print(box)
 coloct_event = ["coloct",  coloct_event_, None]
 
 my_evet = event_list()
-my_evet.appent_event(donte_event)
+my_evet.appendEvent(donte_event)
 # coloct_event_test()
-my_evet.run_evet()
+my_evet.runEvent()
 
 # donte_event_()
 
