@@ -2,12 +2,14 @@ from PIL import Image
 import os
 import jsonFile as jF
 
-class myOpticalCharacterRecognition() :
+class myOrc() :
     orcFile = "myOrc.json"     # armyChinese.json
     allFonts = None
     m_jsonFile = None
     m_fontBoxes = None
-    def __init__(self):
+    def __init__(self, fileName = None) :
+        if not fileName :
+            self.orcFile = fileName
         self.m_jsonFile = jF.jsonFile(os.getcwd() + "\\" + self.orcFile)
         self.allFonts = self.m_jsonFile.jsonGetFile()
         self.m_fontBoxes = fontBoxes()
@@ -163,7 +165,7 @@ class fontBoxes() :
         return boxes
 
 
-muOcr = myOpticalCharacterRecognition()
+muOcr = myOrc()
 img = Image.open(os.getcwd() + "\\picture\\0.png")
 print(muOcr.getString(img))
 

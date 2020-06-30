@@ -28,10 +28,10 @@ def getvariance(pointarr, pointarr2) :
 # 获得目标坐标的判断像素
 def getpointarr(point, pixdata) :
     pointarr = []
-    for y in range(0, 11, 10) : # range(start, end, step) 
+    for y in range(0, 11, 10) : # range(start, end, step)
         for x in range(0, 11, 10) :
             pointarr.append(pixdata[point[0] - 5 + x , point[1] - 5 + y])
-    return pointarr 
+    return pointarr
 
 # 在图中找点
 def findpoint(img, pointarr):
@@ -41,11 +41,11 @@ def findpoint(img, pointarr):
     for y in range(5, img.size[1] - 5):
         for x in range(5, img.size[0] - 5):
             if getvariance(getpointarr((x, y), pixdata), pointarr)  < 30:
-                return  (x, y)            
+                return  (x, y)
 
 # 获得目标坐标的判断像素
 def getpointarr_c(img, point) :
-    
+
     # test for pick
     step = 10
     img_temp = cut_image(img, (point[0]-step, point[1]-step, point[0]+step, point[1]+step))
@@ -54,10 +54,10 @@ def getpointarr_c(img, point) :
 
     pixdata = img.load()
     pointarr = []
-    for y in range(0, 11, 10) : # range(start, end, step) 
+    for y in range(0, 11, 10) : # range(start, end, step)
         for x in range(0, 11, 10) :
             pointarr.append(pixdata[point[0] - 5 + x , point[1] - 5 + y])
-    return pointarr 
+    return pointarr
 
 
 
@@ -76,20 +76,20 @@ def screenshort_new(filename):
 def get_region(type_tell):
     if type_tell == 0:# 0 for support
         init_close_pos = (870, 16)
-        region_tell = (405, 20, 890, 60) 
-        cell_width = 68 
+        region_tell = (405, 20, 890, 60)
+        cell_width = 68
     elif type_tell == 1:
         init_close_pos = (894, 23)
-        region_tell = (46, 85, 656, 140) 
+        region_tell = (46, 85, 656, 140)
         cell_width = 75
     elif type_tell == 2:
         init_close_pos = (870, 16)
-        region_tell = (406, 240, 891, 280) 
-        cell_width = 68 
+        region_tell = (406, 240, 891, 280)
+        cell_width = 68
     elif type_tell == 3:
         init_close_pos = (894, 23)
-        region_tell = (48, 240, 570, 300) 
-        cell_width = 73 
+        region_tell = (48, 240, 570, 300)
+        cell_width = 73
     else:
         print("type_tell is out of range")
         os._exit()
@@ -143,7 +143,7 @@ def get_init_points_c(filename, type_real, type_tell=0, init_pos=(296, 34)):
     else:
         pos_close = init_close_pos
 
-    # get the points of close the windows 
+    # get the points of close the windows
     points_close = getpointarr(init_close_pos, pixdata)
     points_data = { "he" :[
                                 {"value": "close",
@@ -162,13 +162,13 @@ def get_init_points_c(filename, type_real, type_tell=0, init_pos=(296, 34)):
                             "points": points_temp,
                             }
         )
-    else: 
+    else:
         # ask you for all pic
         for i in range( math.floor((region_tell[2]-region_tell[0])/cell_width) ):
-            img_temp = cut_image(img, (region_tell[0] + i*cell_width, 
-                                       pos_close[1] + region_tell[1], 
+            img_temp = cut_image(img, (region_tell[0] + i*cell_width,
+                                       pos_close[1] + region_tell[1],
                                        region_tell[0] + (i+1)*cell_width,
-                                       pos_close[1] + region_tell[3]) 
+                                       pos_close[1] + region_tell[3])
                                 )
             img_temp.show()
             print("this is ", i+1)
@@ -179,14 +179,14 @@ def get_init_points_c(filename, type_real, type_tell=0, init_pos=(296, 34)):
                 points_temp = getpointarr(init_pos, pixdata)
                 # add the list
                 points_data['he'].append( {
-                                    "value": type_real,   
+                                    "value": type_real,
                                     "points": points_temp,
                                     }
                 )
-    
+
     return points_data
 
-# step 3: open the json and find the positon 
+# step 3: open the json and find the positon
 # tell the type of troop
 def findpoint_c(img, type_need, type_tell=0, isCut=1):
     """ 'img' is the type of image from pillow \n
@@ -196,19 +196,19 @@ def findpoint_c(img, type_need, type_tell=0, isCut=1):
     # load some informations
     init_close_pos, region_tell, cell_width = get_region(type_tell)
 
-    # load data to tell the type    
+    # load data to tell the type
     filename_json = "test_json.json"
     pix_get = json_get(filename_json)
     # print(pix_get)
-    
-    
+
+
     # for speed the code, we will search the type
     index = []
-    for i in range(len(pix_get['he'])): 
+    for i in range(len(pix_get['he'])):
         if pix_get['he'][i]['value'] == type_need:
             print("index is ", i)
             index.append(i)
-    
+
     # default is we will cut the imge
     if isCut == 1:
         img_close = cut_image(img, (init_close_pos[0] - 10, 0, init_close_pos[0]  + 15, 250) )
@@ -216,7 +216,7 @@ def findpoint_c(img, type_need, type_tell=0, isCut=1):
         pos_close = findpoint(img_close, pix_get['he'][0]['points'])
     else:
         pos_close = (0, init_close_pos[1])
-    
+
     if pos_close != None:
         pos_close = (pos_close[0] + (init_close_pos[0]-10), pos_close[1])
         print("the pos of 'close' is ", pos_close)
@@ -225,8 +225,8 @@ def findpoint_c(img, type_need, type_tell=0, isCut=1):
             return pos_close
         else:
             if isCut == 1:
-                img_support = cut_image(img, (region_tell[0], pos_close[1] + region_tell[1], 
-                                            region_tell[2], pos_close[1] + region_tell[3]) 
+                img_support = cut_image(img, (region_tell[0], pos_close[1] + region_tell[1],
+                                            region_tell[2], pos_close[1] + region_tell[3])
                                             )
             else:
                 img_support = img
@@ -237,10 +237,10 @@ def findpoint_c(img, type_need, type_tell=0, isCut=1):
                 for i in index:
                     pos_data= findpoint(img_support, pix_get['he'][i]['points'])
                     if pos_data != None:
-                        break    
+                        break
             else:
                 pos_data= findpoint(img_support, pix_get['he'][index[0]]['points'])
-            
+
             # if we find the points, we return them, if not, we will print and return None
             if pos_data != None:
                 pos_data = (pos_data[0] + region_tell[0], pos_data[1] + (pos_close[1]+region_tell[1]))
@@ -269,10 +269,10 @@ def troop_store(img, type_tell=1):
     type_now = []
     type_index = []
     for i in range( math.floor((region_tell[2]-region_tell[0])/cell_width)):
-        img_temp = cut_image(img, (region_tell[0] + i*cell_width, 
-                                    pos_close[1] + region_tell[1], 
+        img_temp = cut_image(img, (region_tell[0] + i*cell_width,
+                                    pos_close[1] + region_tell[1],
                                     region_tell[0] + (i+1)*cell_width,
-                                    pos_close[1] + region_tell[3]) 
+                                    pos_close[1] + region_tell[3])
                             )
         # img_temp.show()
         if (type_tell == 1 or type_tell == 0 ):
@@ -293,11 +293,11 @@ def isindex():
     filename = 'temp_index.png'
     screenshort_new(filename)
     img = Image.open(filename)
-    img = img.transpose(Image.ROTATE_90) 
+    img = img.transpose(Image.ROTATE_90)
     img_index = cut_image(img, (20, 366, 60, 406))
     filename_json = 'test_json.json'
     pix_get = json_get(filename_json)
-    for i in range(len(pix_get['he'])): 
+    for i in range(len(pix_get['he'])):
         if pix_get['he'][i]['value'] == 'index':
             # print("index is ", i)
             break
