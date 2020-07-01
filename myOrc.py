@@ -8,7 +8,7 @@ class myOrc() :
     m_jsonFile = None
     m_fontBoxes = None
     def __init__(self, fileName = None) :
-        if not fileName :
+        if fileName :
             self.orcFile = fileName
         self.m_jsonFile = jF.jsonFile(os.getcwd() + "\\" + self.orcFile)
         self.allFonts = self.m_jsonFile.jsonGetFile()
@@ -18,13 +18,18 @@ class myOrc() :
             self.allFonts['unFinish'] = []
             self.m_jsonFile.jsonSaveFile(self.allFonts)
 
-    def getString(self, img):
-        img = img.convert("RGB")
-        pixdata = img.load()
+    def getString(self, image):
+        ''' 读取图片中的文字，并返回一个字符串 '''
+        image = image.convert("RGB")
+        pixdata = image.load()
         stringInPicture = ''
-        boxes = self.m_fontBoxes.getFontBoxes(pixdata, img.size)
+        boxes = self.m_fontBoxes.getFontBoxes(pixdata, image.size)
         for box in boxes :
-            stringInPicture =  stringInPicture + self.getChar(box, pixdata)
+            if box :
+                stringInPicture = stringInPicture + self.getChar(box, pixdata)
+            else :
+                stringInPicture = stringInPicture + "\n"
+
         return stringInPicture
 
     def getChar(self, box, pixdata):
@@ -54,7 +59,6 @@ class myOrc() :
                     return ''
                 else :
                     continue
-
         return self.addChar((width, length), points)
 
     def comparaChar(self, sourcePoints, destinationPoints, size) :   #待优化算法
@@ -65,16 +69,16 @@ class myOrc() :
         return True
 
     def addChar(self, size, points) :
-        img = Image.new('RGB', (size[0], size[1]), (0, 0, 0))
-        img = img.convert("RGB")
-        pixdata = img.load()
+        image = Image.new('RGB', (size[0], size[1]), (0, 0, 0))
+        image = image.convert("RGB")
+        pixdata = image.load()
         for y in range(size[1]) :
             for x in range(size[0]) :
                 if points[y][x] == 1 :
                     pixdata[x, y] = (0, 0 ,0)
                 else :
                     pixdata[x, y] = (255, 255, 255)
-        img.show()
+        image.show()
         char = input('输入此图片的值：')
         temp = {
             "value" : char,
@@ -162,12 +166,14 @@ class fontBoxes() :
                 if (blackpointX[indexY][boxX[1]] - blackpointX[indexY][boxX[0]]) * (max - min) < 5 :
                     break
                 boxes.append((blackpointX[indexY][boxX[0]], min ,blackpointX[indexY][boxX[1]], max))
+            boxes.append(None)
+        boxes.pop(-1)
         return boxes
 
 
 muOcr = myOrc()
-img = Image.open(os.getcwd() + "\\picture\\0.png")
-print(muOcr.getString(img))
+image = Image.open(os.getcwd() + "\\picture\\0.png")
+print(muOcr.getString(image))
 
 
 

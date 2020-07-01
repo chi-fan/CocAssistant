@@ -2,9 +2,7 @@
 import math
 import json
 from PIL import Image
-from image_deal import cut_image
 import os
-from adb import Screenshot
 
 def json_get(string1) :
     with open(string1, "r", encoding='utf-8') as f:
