@@ -18,13 +18,22 @@ class eventQueue() :
         self.my_eventList.pop(num)
         self.lock.release()
 
+    def setEvent(self, interval, event) :
+            timer = recycleTimer(interval, lambda : self.appendEvent(event))
+            timer.start()
+
     def runEvent(self) :
         while True :
             if len(self.my_eventList) == 0 :
                 continue
             else :
-                print(self.my_eventList[0][0])
-                self.my_eventList[0][1]()
-                if self.my_eventList[0][2] != None :
-                    self.appendEvent(self.my_eventList[0][2])
+                self.my_eventList[0]()
                 self.popEvent()
+
+
+class recycleTimer(threading.Timer) :
+    ''' 继承timer类 重写run() 以实现重复定时器 '''
+    def run(self):
+        while not self.finished.is_set():
+            self.finished.wait(self.interval)
+            self.function(*self.args, **self.kwargs)
