@@ -15,10 +15,10 @@ if __name__ == "__main__":
     print(" " * 40 + "吃饭和island的coc辅助工具")
     print("_" * 100)
     mainEventQueue = EQ.eventQueue()
-    # mainEventQueue.setEvent(5, buildEvent)
-    # mainEventQueue.setEvent(6, collectEvent)
-    # mainEventQueue.setEvent(10, donateEvent)
-    # mainEventQueue.runEvent()
+    mainEventQueue.setEvent(5, buildEvent)
+    mainEventQueue.setEvent(6, collectEvent)
+    mainEventQueue.setEvent(1, donateEvent)
+    mainEventQueue.runEvent()
 
 
     #ctrl + c 无法关闭子进程，待思考

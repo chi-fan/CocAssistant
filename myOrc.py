@@ -25,11 +25,12 @@ class myOrc() :
         stringInPicture = ''
         boxes = self.m_fontBoxes.getFontBoxes(pixdata, image.size)
         for box in boxes :
-            if box :
-                stringInPicture = stringInPicture + self.getChar(box, pixdata)
-            else :
+            if box == (-1, -1) :
+                stringInPicture = stringInPicture + "\t"
+            elif box == (-2, -2) :
                 stringInPicture = stringInPicture + "\n"
-
+            else :
+                stringInPicture = stringInPicture + self.getChar(box, pixdata)
         return stringInPicture
 
     def getChar(self, box, pixdata):
@@ -143,9 +144,15 @@ class fontBoxes() :
     def getCharPoint(self, pixdata, size, boxesX, blackpointX, boxesY, blackpointY) :
         boxes = []
         for indexY in range(len(boxesY)) :
+            prevPoint = None
             for boxX in boxesX[indexY] :
                 min = None
                 max = None
+                # 从上到下找点
+                if prevPoint != None :
+                    if (blackpointX[indexY][boxX[0]] - prevPoint > 20) :
+                        boxes.append((-1, -1))
+                prevPoint = blackpointX[indexY][boxX[1]]
                 for y in range(blackpointY[boxesY[indexY][0]], blackpointY[boxesY[indexY][1]]) :
                     for x in range(blackpointX[indexY][boxX[0]], blackpointX[indexY][boxX[1]] + 1) :
                         if pixdata[x, y][0] == 0 :
@@ -155,7 +162,7 @@ class fontBoxes() :
                         break
                 if min == None :
                     continue
-
+                # 从下到上找点
                 for y in range(blackpointY[boxesY[indexY][1]], blackpointY[boxesY[indexY][0]], -1) :
                     for x in range(blackpointX[indexY][boxX[0]], blackpointX[indexY][boxX[1]] + 1) :
                         if pixdata[x, y][0] == 0 :
@@ -163,19 +170,19 @@ class fontBoxes() :
                             break
                     if max != None :
                         break
+                if max == None :
+                    continue
+                # 不要没用的点
                 if (blackpointX[indexY][boxX[1]] - blackpointX[indexY][boxX[0]]) * (max - min) < 5 :
-                    break
+                    continue
                 boxes.append((blackpointX[indexY][boxX[0]], min ,blackpointX[indexY][boxX[1]], max))
-            boxes.append(None)
+            boxes.append((-2, -2))
         boxes.pop(-1)
         return boxes
 
 
-muOcr = myOrc()
-image = Image.open(os.getcwd() + "\\picture\\0.png")
-print(muOcr.getString(image))
-
-
-
+# muOcr = myOrc()
+# image = Image.open(os.getcwd() + "\\ed.png")
+# print(muOcr.getString(image))
 
 

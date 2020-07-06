@@ -13,13 +13,31 @@ class pictureAnalysis() :
 
     def translateStringToRequest(self, pendingString) :
         ''' 将特殊字符串转换为部落冲突捐赠数据字典 '''
-        Request = {}
+        Request = {
+            'str' : None,
+            'army' : {
+                'fill_in' : 0,
+                'max'     : 0,
+            },
+            'spells' : {
+                'fill_in' : 0,
+                'max'     : 0,
+            },
+            'device' : {
+                'fill_in' : 0,
+                'max'     : 0,
+            },
+            'position' : None
+        }
         realString =  re.split(r'(\n)', pendingString)
+        # 去点多余的点
+        while (realString[0] == "") :
+            realString.pop(0)
+            realString.pop(0)
         Request['str'] = realString[0]
 
         if len(realString) > 2 :
             parameter = re.findall(r'\d+', realString[2])
-
             Request['army']['fill_in'] = parameter[0]
             Request['army']['max'] = parameter[1]
             if len(parameter) > 3 :
@@ -41,8 +59,9 @@ class pictureAnalysis() :
     def getImageRequestList(self, imageName) :
         ''' 返回图片中所有捐赠请求信息 '''
         pendingImage = Image.open(imageName)
+        pendingImage = pendingImage.transpose(Image.ROTATE_90)
         pendingImage = pendingImage.crop((0, 100, self.dialogWidth, self.dialogheigth))
-
+        # pendingImage.show()
         # 获得捐赠按钮所在位置
         newImage = self.processImage(pendingImage, lambda x, y, z : not (y > 200 and z < 100))
         buttonPostionList = self.locateDialogBoxList(newImage, 600)
@@ -81,8 +100,8 @@ class pictureAnalysis() :
             else :
                 cellBox = pendingImage.crop((0 , horizontalLineList[index - 1][1] + 84, 500, horizontalLineList[index][1]))
             cellBox = self.processImage(cellBox, lambda x, y, z : x >= 200  and y >= 200 and z >= 200 and abs(x - y) < 3 and abs(x - z) < 3 and abs(y - z) < 3)
+            # cellBox.show()
             pendingString = self.m_myOrc.getString(cellBox)
-            print(pendingString)
             Request = self.translateStringToRequest(pendingString)
             Request['position'] = buttonPostionList[m]
             m += 1
@@ -126,4 +145,4 @@ class pictureAnalysis() :
 
 
 instpictureAnalysis = pictureAnalysis()
-print(instpictureAnalysis.getImageRequestList(os.getcwd() + "\\picture\\cutIn.png"))
+print(instpictureAnalysis.getImageRequestList(os.getcwd() + "\\picture\\screenshort.png"))
