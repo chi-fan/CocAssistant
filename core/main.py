@@ -4,6 +4,11 @@ import logging
 import argparse
 from utils.Logger import initLogging
 from utils.PyGui import initWindows
+from Constant import AppWindowsName
+from android.adb import ADB
+from android.javacap import Javacap
+from utils import utils
+from utils import aircv
 LOGGING = logging.getLogger("CocAssistant.main")
 
 def enableGui() :
@@ -23,5 +28,18 @@ if __name__ == "__main__" :
     initLogging()
     initArgparse()
     LOGGING.info('*' * 70)
-    LOGGING.info("CocAssistant -- 部落冲突辅助 by chifan and HoneyGump\n")
+    LOGGING.info(AppWindowsName)
     LOGGING.info('*' * 70)
+
+    instAdb = ADB("127.0.0.1:62001")
+    instJavacap = Javacap(instAdb)
+    screen = instJavacap.get_frame_from_stream()
+    print(len(screen))
+    filename="./core/temp/screen.jpg"
+    ensure_orientation=True
+    quality=10
+    max_size=None
+    # output cv2 object
+    screen = utils.string_2_img(screen)
+
+    aircv.imwrite(filename, screen, quality)

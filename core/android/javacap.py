@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-from airtest.core.android.yosemite import Yosemite
 import struct
-from airtest.core.android.adb import ADB
-from airtest import aircv
+from android.Yosemite import Yosemite
+import android.adb
+import logging
+from utils.snippet import on_method_ready, reg_cleanup
+from utils.nbsp import NonBlockingStreamReader
+from utils.safesocket import SafeSocket
 
-LOGGING = get_logger(__name__)
+LOGGING = logging.getLogger(__name__)
 
 class Javacap(Yosemite):
     """
@@ -19,7 +22,7 @@ class Javacap(Yosemite):
         super(Javacap, self).__init__(adb)
         self.frame_gen = None
 
-    @on_method_ready('install_or_upgrade')
+    # @on_method_ready('install_or_upgrade')
     def _setup_stream_server(self):
         """
         Setup stream server
@@ -45,7 +48,7 @@ class Javacap(Yosemite):
                 break
             if b"Address already in use" in line:
                 raise RuntimeError("javacap server setup error: %s" % line)
-        reg_cleanup(proc.kill)
+        # reg_cleanup(proc.kill)
         return proc, nbsp, localport
 
     def get_frames(self):
@@ -118,19 +121,4 @@ class Javacap(Yosemite):
         else:
             LOGGING.warn("%s tear down failed" % self.frame_gen)
         self.frame_gen = None
-
-
-if __name__ == '__main__':
-    instAdb = ADB("127.0.0.1:62001")
-    instJavacap = Javacap(instAdb)
-    screen = instJavacap.get_frame_from_stream()
-    print(len(screen))
-    filename="./screen.jpg"
-    ensure_orientation=True
-    quality=10
-    max_size=None
-    # output cv2 object
-    screen = aircv.utils.string_2_img(screen)
-
-    aircv.imwrite(filename, screen, quality)
 

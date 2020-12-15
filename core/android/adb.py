@@ -8,8 +8,14 @@ import platform
 import warnings
 import subprocess
 import threading
+import logging
+from utils.snippet import retries, get_std_encoding, reg_cleanup, split_cmd
+from utils.compat import decode_path, raisefrom, proc_communicate_timeout, SUBPROCESS_FLAG
+from Constant import DefaultAdbPath
+from six import PY3, text_type, binary_type, raise_from
+from six.moves import reduce
 
-LOGGING = logging.get_logger(__name__)
+LOGGING = logging.getLogger("CocAssistant.adb")
 
 class ADB(object):
     """adb client object class"""
@@ -44,9 +50,9 @@ class ADB(object):
         """
         system = platform.system()
         machine = platform.machine()
-        adb_path = DEFAULT_ADB_PATH.get('{}-{}'.format(system, machine))
+        adb_path = DefaultAdbPath.get('{}-{}'.format(system, machine))
         if not adb_path:
-            adb_path = DEFAULT_ADB_PATH.get(system)
+            adb_path = DefaultAdbPath.get(system)
         if not adb_path:
             raise RuntimeError("No adb executable supports this platform({}-{}).".format(system, machine))
 
@@ -137,6 +143,7 @@ class ADB(object):
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            shell=True,
             creationflags=SUBPROCESS_FLAG
         )
         return proc
@@ -257,7 +264,7 @@ class ADB(object):
         stdout, stderr = proc.communicate()
 
         stdout = stdout.decode(get_std_encoding(sys.stdout))
-        stderr = stderr.decode(get_std_encoding(sys.stdout))
+        stderr = stderr.decode('gbk')
 
         if proc.returncode == 0:
             return stdout.strip()
@@ -336,7 +343,7 @@ class ADB(object):
             command output
 
         """
-        if self.sdk_version < SDK_VERISON_ANDROID7:
+        if self.sdk_version < 24:
             # for sdk_version < 25, adb shell do not raise error
             # https://stackoverflow.com/questions/9379400/adb-error-codes
             cmd = split_cmd(cmd) + [";", "echo", "---$?---"]

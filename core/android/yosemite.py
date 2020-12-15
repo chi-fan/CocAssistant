@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
+from utils.snippet import on_method_ready
 
-LOGGING = get_logger(__name__)
+LOGGING = logging.getLogger(__name__)
 
 class Yosemite(object):
     """Wrapper class of Yosemite.apk, used by javacap/recorder/yosemite_ime."""
