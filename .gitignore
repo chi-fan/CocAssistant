@@ -4,3 +4,5 @@
 *.png
 /picture
 规则
+*.log
+**/temp
