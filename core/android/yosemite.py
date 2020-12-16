@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 from utils.snippet import on_method_ready
+from Constant import YosemiteApk, YosemitePackage
+from utils.apkparser import APK
 
 LOGGING = logging.getLogger(__name__)
 

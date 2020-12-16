@@ -2,7 +2,7 @@
 import os
 
 ThisPath = os.path.dirname(os.path.realpath(__file__))
-YosemiteApk = os.path.join(ThisPath, "apks", "Yosemite.apk")
+YosemiteApk = os.path.join(ThisPath, 'android' , "apks", "Yosemite.apk")
 YosemitePackage = 'com.netease.nie.yosemite'
 LogFile = os.path.join(ThisPath, './temp/cocAssistant.log')
 DefaultAdbPath = {

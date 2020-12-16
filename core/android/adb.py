@@ -263,7 +263,7 @@ class ADB(object):
         proc = self.start_cmd("get-state")
         stdout, stderr = proc.communicate()
 
-        stdout = stdout.decode(get_std_encoding(sys.stdout))
+        stdout = stdout.decode('gbk')
         stderr = stderr.decode('gbk')
 
         if proc.returncode == 0:

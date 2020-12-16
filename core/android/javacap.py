@@ -22,7 +22,7 @@ class Javacap(Yosemite):
         super(Javacap, self).__init__(adb)
         self.frame_gen = None
 
-    # @on_method_ready('install_or_upgrade')
+    @on_method_ready('install_or_upgrade')
     def _setup_stream_server(self):
         """
         Setup stream server
@@ -86,7 +86,6 @@ class Javacap(Yosemite):
                 stopping = yield frame_data
 
         LOGGING.debug("javacap stream ends")
-        print("javacap stream ends")
         s.close()
         nbsp.kill()
         proc.kill()
