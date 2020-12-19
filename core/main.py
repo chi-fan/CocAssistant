@@ -34,8 +34,8 @@ class MyWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.button)
         self.setLayout(self.layout)
         self.button.clicked.connect(self.magic)
-        #新建一个QTimer对象
-        self.timer = QBasicTimer() # QTimer()貌似不行，不知何故？
+
+        self.timer = QBasicTimer()
         self.timer.start(33, self)
 
     @QtCore.Slot()
@@ -49,7 +49,6 @@ class MyWidget(QtWidgets.QWidget):
         self.labelRemote.setPixmap(screen)
         # self.labelRemote.repaint()
 
-     # 覆写计时器事件处理函数timerEvent()
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
             self.refreshScreen()
