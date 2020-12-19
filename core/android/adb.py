@@ -14,7 +14,8 @@ from utils.compat import decode_path, raisefrom, proc_communicate_timeout, SUBPR
 from Constant import DefaultAdbPath
 from six import PY3, text_type, binary_type, raise_from
 from six.moves import reduce
-
+from error import (AdbError, AdbShellError, AirtestError,
+                                DeviceConnectionError)
 LOGGING = logging.getLogger("CocAssistant.adb")
 
 class ADB(object):

@@ -43,12 +43,11 @@ class MyWidget(QtWidgets.QWidget):
         self.refreshScreen()
 
     def refreshScreen(self) :
-        # while True :
-            screen = self.instJavacap.get_frame_from_stream()
-            screen = utils.string_2_img(screen)
-            screen = cvimgToQPixmap(screen)
-            self.labelRemote.setPixmap(screen)
-            # self.labelRemote.repaint()
+        screen = self.instJavacap.get_frame_from_stream()
+        screen = utils.string_2_img(screen)
+        screen = cvimgToQPixmap(screen)
+        self.labelRemote.setPixmap(screen)
+        # self.labelRemote.repaint()
 
      # 覆写计时器事件处理函数timerEvent()
     def timerEvent(self, event):
