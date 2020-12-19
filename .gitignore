@@ -6,3 +6,6 @@
 规则
 *.log
 **/temp
+helloWorld.py
+view.qml
+*pyproject*

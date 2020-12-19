@@ -7,7 +7,7 @@ from utils.snippet import on_method_ready, reg_cleanup
 from utils.nbsp import NonBlockingStreamReader
 from utils.safesocket import SafeSocket
 
-LOGGING = logging.getLogger(__name__)
+LOGGING = logging.getLogger("CocAssistant.javaCap")
 
 class Javacap(Yosemite):
     """
@@ -65,7 +65,7 @@ class Javacap(Yosemite):
         t = s.recv(24)
         # javacap header
         LOGGING.debug(struct.unpack("<2B5I2B", t))
-        print(struct.unpack("<2B5I2B", t))
+        LOGGING.info(struct.unpack("<2B5I2B", t))
 
         stopping = False
         while not stopping:
@@ -77,7 +77,7 @@ class Javacap(Yosemite):
                 header = s.recv(4)
             if header is None:
                 LOGGING.error("javacap header is None")
-                print("javacap header is None")
+                LOGGING.info("javacap header is None")
                 # recv timeout, if not frame updated, maybe screen locked
                 stopping = yield None
             else:

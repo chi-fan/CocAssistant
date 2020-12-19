@@ -564,7 +564,7 @@ class ADB(object):
         out = self.cmd(cmds)
 
         if re.search(r"Failure \[.*?\]", out):
-            print(out)
+            LOGGING.info(out)
             raise AirtestError("Installation Failure")
 
         return out
@@ -609,7 +609,7 @@ class ADB(object):
                 return self.install_app(filepath, replace)
 
         if re.search(r"Failure \[.*?\]", out):
-            print(out)
+            LOGGING.info(out)
             raise AirtestError("Installation Failure")
 
         return out
@@ -635,7 +635,7 @@ class ADB(object):
         device_path = '\"%s/%s\"' % (device_dir, filename)
 
         out = self.cmd(["push", filepath, device_dir])
-        print(out)
+        LOGGING.info(out)
 
         if not replace:
             self.shell(['pm', 'install', device_path])
@@ -1115,7 +1115,7 @@ class ADB(object):
 
     def list_app(self, third_only=False):
         """
-        Perform `adb shell pm list packages` to print all packages, optionally only
+        Perform `adb shell pm list packages` to LOGGING.info all packages, optionally only
           those whose package name contains the text in FILTER.
 
         Options
@@ -1129,7 +1129,7 @@ class ADB(object):
 
 
         Args:
-            third_only: print only third party packages
+            third_only: LOGGING.info only third party packages
 
         Returns:
             list of packages
@@ -1146,7 +1146,7 @@ class ADB(object):
 
     def path_app(self, package):
         """
-        Perform `adb shell pm path` command to print the path to the package
+        Perform `adb shell pm path` command to LOGGING.info the path to the package
 
         Args:
             package: package name
@@ -1360,7 +1360,7 @@ class ADB(object):
             if matcher:
                 return int(matcher.group(2))
         # 获取不到网段长度就默认取17
-        print('[iputils WARNING] fail to get subnet mask len. use 17 as default.')
+        LOGGING.info('[iputils WARNING] fail to get subnet mask len. use 17 as default.')
         return 17
 
     def get_memory(self):
@@ -1527,7 +1527,7 @@ class ADB(object):
             else:
                 return self.get_top_activity()[0]
         except Exception as e:
-            print("[Error] Cannot get current top activity")
+            LOGGING.info("[Error] Cannot get current top activity")
         return ""
 
 

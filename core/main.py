@@ -1,45 +1,64 @@
-# -*- coding: utf-8 -*-
+# # -*- coding: utf-8 -*-
 
-import logging
-import argparse
-from utils.Logger import initLogging
-from utils.PyGui import initWindows
-from Constant import AppWindowsName
 from android.adb import ADB
 from android.javacap import Javacap
 from utils import utils
 from utils import aircv
-LOGGING = logging.getLogger("CocAssistant.main")
+import cv2
+import numpy as np
+import sys
+import random
+from Constant import AppWindowsName
+from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout
+from PySide6.QtCore import QBasicTimer
 
-def enableGui() :
-    initWindows()
+def cvimgToQPixmap(cvImage):
+    cvImage=cv2.resize(src=cvImage,dsize=None,fx=0.2,fy=0.2)
+    cvImage=cv2.cvtColor(cvImage,cv2.COLOR_BGR2RGB)
+    image = QtGui.QImage(cvImage[:],cvImage.shape[1], cvImage.shape[0], cvImage.shape[1] * 3, QtGui.QImage.Format_RGB888)
+    pixmap = QPixmap.fromImage(image)
+    return pixmap
 
-def initArgparse() :
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-v", "--verbose", help="increase output verbosity",
-                        action="store_true")
-    parser.add_argument("-g", "--GUI", help="enable GUI for this App",
-                        action="store_true")
-    args = parser.parse_args()
-    if args.GUI:
-        enableGui()
+class MyWidget(QtWidgets.QWidget):
+    def __init__(self):
+        super(MyWidget, self).__init__()
+        self.setWindowTitle(AppWindowsName)
+        instAdb = ADB("127.0.0.1:62001")
+        self.instJavacap = Javacap(instAdb)
+        self.labelRemote = QLabel(self)
+        self.button = QtWidgets.QPushButton("refreshScreen")
+        self.layout = QtWidgets.QVBoxLayout()
+        self.layout.addWidget(self.labelRemote)
+        self.layout.addWidget(self.button)
+        self.setLayout(self.layout)
+        self.button.clicked.connect(self.magic)
+        #新建一个QTimer对象
+        self.timer = QBasicTimer() # QTimer()貌似不行，不知何故？
+        self.timer.start(33, self)
 
-if __name__ == "__main__" :
-    initLogging()
-    initArgparse()
-    LOGGING.info('*' * 70)
-    LOGGING.info(AppWindowsName)
-    LOGGING.info('*' * 70)
+    @QtCore.Slot()
+    def magic(self):
+        self.refreshScreen()
 
-    instAdb = ADB("127.0.0.1:62001")
-    instJavacap = Javacap(instAdb)
-    screen = instJavacap.get_frame_from_stream()
-    print(len(screen))
-    filename="./core/temp/screen.jpg"
-    ensure_orientation=True
-    quality=10
-    max_size=None
-    # output cv2 object
-    screen = utils.string_2_img(screen)
+    def refreshScreen(self) :
+        # while True :
+            screen = self.instJavacap.get_frame_from_stream()
+            screen = utils.string_2_img(screen)
+            screen = cvimgToQPixmap(screen)
+            self.labelRemote.setPixmap(screen)
+            # self.labelRemote.repaint()
 
-    aircv.imwrite(filename, screen, quality)
+     # 覆写计时器事件处理函数timerEvent()
+    def timerEvent(self, event):
+        if event.timerId() == self.timer.timerId():
+            self.refreshScreen()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    widget = MyWidget()
+    widget.resize(600, 500)
+    widget.show()
+    widget.refreshScreen()
+    app.exec_()
