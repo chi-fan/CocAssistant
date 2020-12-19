@@ -12,9 +12,9 @@ class BaseError(Exception):
         return repr(self.value)
 
 
-class AirtestError(BaseError):
+class CocAssistantError(BaseError):
     """
-        This is Airtest BaseError
+        This is CocAssistant BaseError
     """
     pass
 
@@ -27,7 +27,7 @@ class InvalidMatchingMethodError(BaseError):
     pass
 
 
-class TargetNotFoundError(AirtestError):
+class TargetNotFoundError(CocAssistantError):
     """
         This is TargetNotFoundError BaseError
         When something is not found
@@ -35,7 +35,7 @@ class TargetNotFoundError(AirtestError):
     pass
 
 
-class ScriptParamError(AirtestError):
+class ScriptParamError(CocAssistantError):
     """
         This is ScriptParamError BaseError
         When something goes wrong
@@ -75,7 +75,7 @@ class ICmdError(Exception):
     """
         This is ICmdError BaseError
         When ICmd have something wrong
-    """    
+    """
     def __init__(self, stdout, stderr):
         self.stdout = stdout
         self.stderr = stderr
@@ -88,7 +88,7 @@ class MinicapError(BaseError):
     """
         This is MinicapError BaseError
         When Minicap have something wrong
-    """    
+    """
     pass
 
 
@@ -96,7 +96,7 @@ class MinitouchError(BaseError):
     """
         This is MinitouchError BaseError
         When Minicap have something wrong
-    """    
+    """
     pass
 
 

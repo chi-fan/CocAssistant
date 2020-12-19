@@ -77,7 +77,7 @@ def crop_image(img, rect):
     """
         区域截图，同时返回截取结果 和 截取偏移;
         Crop image , rect = [x_min, y_min, x_max ,y_max].
-        (airtest中有用到)
+        (CocAssistant中有用到)
     """
 
     if isinstance(rect, (list, tuple)) and len(rect) == 4:

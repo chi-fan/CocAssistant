@@ -14,7 +14,7 @@ from utils.compat import decode_path, raisefrom, proc_communicate_timeout, SUBPR
 from Constant import DefaultAdbPath
 from six import PY3, text_type, binary_type, raise_from
 from six.moves import reduce
-from error import (AdbError, AdbShellError, AirtestError,
+from error import (AdbError, AdbShellError, CocAssistantError,
                                 DeviceConnectionError)
 LOGGING = logging.getLogger("CocAssistant.adb")
 
@@ -566,7 +566,7 @@ class ADB(object):
 
         if re.search(r"Failure \[.*?\]", out):
             LOGGING.info(out)
-            raise AirtestError("Installation Failure")
+            raise CocAssistantError("Installation Failure")
 
         return out
 
@@ -611,7 +611,7 @@ class ADB(object):
 
         if re.search(r"Failure \[.*?\]", out):
             LOGGING.info(out)
-            raise AirtestError("Installation Failure")
+            raise CocAssistantError("Installation Failure")
 
         return out
 
@@ -713,7 +713,7 @@ class ADB(object):
             duration: time interval for action, default 500
 
         Raises:
-            AirtestError: if SDK version is not supported
+            CocAssistantError: if SDK version is not supported
 
         Returns:
             None
@@ -725,7 +725,7 @@ class ADB(object):
 
         version = self.sdk_version
         if version <= 15:
-            raise AirtestError('swipe: API <= 15 not supported (version=%d)' % version)
+            raise CocAssistantError('swipe: API <= 15 not supported (version=%d)' % version)
         elif version <= 17:
             self.shell('input swipe %d %d %d %d' % (x0, y0, x1, y1))
         else:
@@ -1014,7 +1014,7 @@ class ADB(object):
         Perform `adb shell dumpsys activity top` command search for the top activity
 
         Raises:
-            AirtestError: if top activity cannot be obtained
+            CocAssistantError: if top activity cannot be obtained
 
         Returns:
             top activity as a tuple: (package_name, activity_name, pid)
@@ -1027,7 +1027,7 @@ class ADB(object):
         if m:
             return m[-1]
         else:
-            raise AirtestError("Can not get top activity, output:%s" % dat)
+            raise CocAssistantError("Can not get top activity, output:%s" % dat)
 
     def is_keyboard_shown(self):
         """
@@ -1047,7 +1047,7 @@ class ADB(object):
         Perform `adb shell dumpsys window policy` command and search for information if screen is turned on or off
 
         Raises:
-            AirtestError: if screen state can't be detected
+            CocAssistantError: if screen state can't be detected
 
         Returns:
             True or False whether the screen is turned on or off
@@ -1063,14 +1063,14 @@ class ADB(object):
             m = screenOnRE.search(self.shell('dumpsys window policy'))
             if m:
                 return m.group(1) == 'SCREEN_STATE_ON'
-        raise AirtestError("Couldn't determine screen ON state")
+        raise CocAssistantError("Couldn't determine screen ON state")
 
     def is_locked(self):
         """
         Perform `adb shell dumpsys window policy` command and search for information if screen is locked or not
 
         Raises:
-            AirtestError: if lock screen can't be detected
+            CocAssistantError: if lock screen can't be detected
 
         Returns:
             True or False whether the screen is locked or not
@@ -1079,7 +1079,7 @@ class ADB(object):
         lockScreenRE = re.compile('(?:mShowingLockscreen|isStatusBarKeyguard|showing)=(true|false)')
         m = lockScreenRE.search(self.shell('dumpsys window policy'))
         if not m:
-            raise AirtestError("Couldn't determine screen lock state")
+            raise CocAssistantError("Couldn't determine screen lock state")
         return (m.group(1) == 'true')
 
     def unlock(self):
@@ -1154,7 +1154,7 @@ class ADB(object):
 
         Raises:
             AdbShellError: if any adb error occurs
-            AirtestError: if package is not found on the device
+            CocAssistantError: if package is not found on the device
 
         Returns:
             path to the package
@@ -1165,7 +1165,7 @@ class ADB(object):
         except AdbShellError:
             output = ""
         if 'package:' not in output:
-            raise AirtestError('package not found, output:[%s]' % output)
+            raise CocAssistantError('package not found, output:[%s]' % output)
         return output.split("package:")[1].strip()
 
     def check_app(self, package):
@@ -1176,7 +1176,7 @@ class ADB(object):
             package: package name
 
         Raises:
-            AirtestError: if package is not found
+            CocAssistantError: if package is not found
 
         Returns:
             True if package has been found
@@ -1186,7 +1186,7 @@ class ADB(object):
         pattern = r'Package\s+\[' + str(package) + '\]'
         match = re.search(pattern, output)
         if match is None:
-            raise AirtestError('package "{}" not found'.format(package))
+            raise CocAssistantError('package "{}" not found'.format(package))
         return True
 
     def start_app(self, package, activity=None):
@@ -1222,7 +1222,7 @@ class ADB(object):
         out = self.shell(['am', 'start', '-S', '-W', '%s/%s' % (package, activity),
                           '-c', 'android.intent.category.LAUNCHER', '-a', 'android.intent.action.MAIN'])
         if not re.search(r"Status:\s*ok", out):
-            raise AirtestError("Starting App: %s/%s Failed!" % (package, activity))
+            raise CocAssistantError("Starting App: %s/%s Failed!" % (package, activity))
 
         matcher = re.search(r"ThisTime:\s*(\d+)", out)
         if matcher:
