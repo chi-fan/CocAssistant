@@ -1,13 +1,13 @@
 # # -*- coding: utf-8 -*-
 
-from android.adb import ADB
-from android.javacap import Javacap
-from utils import utils
-from utils import aircv
 import cv2
 import numpy as np
 import sys
 import random
+from android.adb import ADB
+from android.javacap import Javacap
+from utils import utils
+from utils import aircv
 from Constant import AppWindowsName
 from PySide6 import QtCore, QtWidgets, QtGui
 from PySide6.QtGui import QImage, QPixmap
@@ -17,7 +17,7 @@ from PySide6.QtCore import QBasicTimer
 def cvimgToQPixmap(cvImage):
     cvImage=cv2.resize(src=cvImage,dsize=None,fx=0.2,fy=0.2)
     cvImage=cv2.cvtColor(cvImage,cv2.COLOR_BGR2RGB)
-    image = QtGui.QImage(cvImage[:],cvImage.shape[1], cvImage.shape[0], cvImage.shape[1] * 3, QtGui.QImage.Format_RGB888)
+    image = QtGui.QImage(cvImage[:], cvImage.shape[1], cvImage.shape[0], cvImage.shape[1] * cvImage.shape[2], QtGui.QImage.Format_RGB888)
     pixmap = QPixmap.fromImage(image)
     return pixmap
 
