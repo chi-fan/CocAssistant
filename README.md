@@ -29,3 +29,6 @@
     > 夜神模拟器
 
     > 分辨率设置 : 1920 * 1080 手机版
+
+## 环境安装
+运行 pip install -r requirements.txt 指令安装python虚拟环境来运行此程序
