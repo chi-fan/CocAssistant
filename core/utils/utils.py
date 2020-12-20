@@ -4,9 +4,15 @@
 import cv2
 import numpy as np
 from PIL import Image
-
+from PySide6.QtGui import QImage, QPixmap
 from .error import TemplateInputError
 
+def cvimgToQPixmap(cvImage) :
+    cvImage=cv2.resize(src=cvImage,dsize=None,fx=0.2,fy=0.2)
+    cvImage=cv2.cvtColor(cvImage,cv2.COLOR_BGR2RGB)
+    image = QImage(cvImage[:], cvImage.shape[1], cvImage.shape[0], cvImage.shape[1] * cvImage.shape[2], QImage.Format_RGB888)
+    pixmap = QPixmap.fromImage(image)
+    return pixmap
 
 def generate_result(middle_point, pypts, confi):
     """Format the result: 定义图像识别结果格式."""

@@ -1,62 +1,26 @@
 # # -*- coding: utf-8 -*-
 
-import cv2
-import numpy as np
-import sys
-import random
-from android.adb import ADB
-from android.javacap import Javacap
-from utils import utils
-from utils import aircv
+from utils.Logger import getLogger, initLogging
+from GUI.MainWindows import MyWidget
+from PySide6.QtWidgets import QApplication
+from BLL.LoggingToGui import LoggingToGui, sendLoggingToQt
 from Constant import AppWindowsName
-from PySide6 import QtCore, QtWidgets, QtGui
-from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout
-from PySide6.QtCore import QBasicTimer
+import queue
 
-def cvimgToQPixmap(cvImage):
-    cvImage=cv2.resize(src=cvImage,dsize=None,fx=0.2,fy=0.2)
-    cvImage=cv2.cvtColor(cvImage,cv2.COLOR_BGR2RGB)
-    image = QtGui.QImage(cvImage[:], cvImage.shape[1], cvImage.shape[0], cvImage.shape[1] * cvImage.shape[2], QtGui.QImage.Format_RGB888)
-    pixmap = QPixmap.fromImage(image)
-    return pixmap
+LOGGING = getLogger("CocAssistant.Main")
+myQueue = queue.Queue(100)
 
-class MyWidget(QtWidgets.QWidget):
-    def __init__(self):
-        super(MyWidget, self).__init__()
-        self.setWindowTitle(AppWindowsName)
-        instAdb = ADB("127.0.0.1:62001")
-        self.instJavacap = Javacap(instAdb)
-        self.labelRemote = QLabel(self)
-        self.button = QtWidgets.QPushButton("refreshScreen")
-        self.layout = QtWidgets.QVBoxLayout()
-        self.layout.addWidget(self.labelRemote)
-        self.layout.addWidget(self.button)
-        self.setLayout(self.layout)
-        self.button.clicked.connect(self.magic)
-
-        self.timer = QBasicTimer()
-        self.timer.start(33, self)
-
-    @QtCore.Slot()
-    def magic(self):
-        self.refreshScreen()
-
-    def refreshScreen(self) :
-        screen = self.instJavacap.get_frame_from_stream()
-        screen = utils.string_2_img(screen)
-        screen = cvimgToQPixmap(screen)
-        self.labelRemote.setPixmap(screen)
-        # self.labelRemote.repaint()
-
-    def timerEvent(self, event):
-        if event.timerId() == self.timer.timerId():
-            self.refreshScreen()
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+if __name__ == "__main__" :
+    initLogging(myQueue)
+    m_sendLoggingToQt = sendLoggingToQt()
+    m_LoggingToGui = LoggingToGui(myQueue, m_sendLoggingToQt)
+    m_LoggingToGui.start()
+    app = QApplication([])
     widget = MyWidget()
+    m_sendLoggingToQt.sendLogging.connect(widget.showTextInTextBrowser)
     widget.resize(600, 500)
     widget.show()
-    widget.refreshScreen()
+    LOGGING.info("*" * 50)
+    LOGGING.info(AppWindowsName)
+    LOGGING.info("*" * 50)
     app.exec_()
