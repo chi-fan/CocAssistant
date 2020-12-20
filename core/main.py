@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QApplication
 from BLL.LoggingToGui import LoggingToGui, sendLoggingToQt
 from Constant import AppWindowsName
 import queue
+from BLL.Execute import Execute
 
 LOGGING = getLogger("CocAssistant.Main")
 myQueue = queue.Queue(100)
@@ -15,9 +16,11 @@ if __name__ == "__main__" :
     m_sendLoggingToQt = sendLoggingToQt()
     m_LoggingToGui = LoggingToGui(myQueue, m_sendLoggingToQt)
     m_LoggingToGui.start()
+    m_execute = Execute(m_sendLoggingToQt)
     app = QApplication([])
     widget = MyWidget()
     m_sendLoggingToQt.sendLogging.connect(widget.showTextInTextBrowser)
+    widget.sendSendExecute.connect(m_execute.execture)
     widget.resize(600, 500)
     widget.show()
     LOGGING.info("*" * 50)

@@ -13,6 +13,7 @@ from utils.Logger import getLogger
 LOGGING = getLogger("CocAssistant.MainWindows")
 
 class MyWidget(QtWidgets.QWidget) :
+    sendSendExecute = QtCore.Signal(str)
     def __init__(self):
         super(MyWidget, self).__init__()
         self.setWindowTitle(AppWindowsName)
@@ -26,8 +27,9 @@ class MyWidget(QtWidgets.QWidget) :
         self.textShow = QTextBrowser(self)
         self.layout.addWidget(self.textShow)
 
-        self.testInput = QLineEdit(self)
-        self.layout.addWidget(self.testInput)
+        self.textInput = QLineEdit(self)
+        self.textInput.returnPressed.connect(self.inputText)
+        self.layout.addWidget(self.textInput)
 
         self.setLayout(self.layout)
         self.timer = QBasicTimer()
@@ -37,6 +39,10 @@ class MyWidget(QtWidgets.QWidget) :
     @QtCore.Slot()
     def showTextInTextBrowser(self, text = None) :
         self.textShow.append(text)
+
+    @QtCore.Slot()
+    def inputText(self) :
+        self.sendSendExecute.emit(self.textInput.text())
 
     def refreshScreen(self) :
         screen = self.instJavacap.get_frame_from_stream()
