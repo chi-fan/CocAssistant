@@ -1,14 +1,13 @@
 # # -*- coding: utf-8 -*-
 import sys
 import random
-from android.adb import ADB
-from android.javacap import Javacap
-from utils import utils, aircv
 from Constant import AppWindowsName
 from PySide6 import QtCore, QtWidgets, QtGui
 from PySide6.QtWidgets import *
 from PySide6.QtCore import QBasicTimer
 from utils.Logger import getLogger
+from utils import utils
+import numpy as np
 
 LOGGING = getLogger("CocAssistant.MainWindows")
 
@@ -17,10 +16,7 @@ class MyWidget(QtWidgets.QWidget) :
     def __init__(self):
         super(MyWidget, self).__init__()
         self.setWindowTitle(AppWindowsName)
-        instAdb = ADB("127.0.0.1:62001")
-        self.instJavacap = Javacap(instAdb)
         self.layout = QtWidgets.QVBoxLayout()
-
         self.labelRemote = QLabel(self)
         self.layout.addWidget(self.labelRemote)
 
@@ -32,21 +28,17 @@ class MyWidget(QtWidgets.QWidget) :
         self.layout.addWidget(self.textInput)
 
         self.setLayout(self.layout)
-        self.timer = QBasicTimer()
-        self.timer.start(33, self)
-        self.refreshScreen()
 
     @QtCore.Slot()
     def showTextInTextBrowser(self, text = None) :
         self.textShow.append(text)
 
-    @QtCore.Slot()
+    @QtCore.Slot(str)
     def inputText(self) :
         self.sendSendExecute.emit(self.textInput.text())
 
-    def refreshScreen(self) :
-        screen = self.instJavacap.get_frame_from_stream()
-        screen = utils.string_2_img(screen)
+    @QtCore.Slot(np.ndarray)
+    def refreshScreen(self, screen) :
         screen = utils.cvimgToQPixmap(screen)
         self.labelRemote.setPixmap(screen)
         self.labelRemote.repaint()

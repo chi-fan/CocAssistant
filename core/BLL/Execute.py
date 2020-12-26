@@ -1,6 +1,6 @@
 from utils.Logger import getLogger
 from PySide6.QtCore import QObject, Signal, Slot
-from .LoggingToGui import sendLoggingToQt
+from .LoggingToGui import SendLoggingToQt
 import subprocess
 
 LOGGING = getLogger("CocAssistant.Execute")

@@ -9,7 +9,6 @@ def initLogging(queue) :
     logging.basicConfig(level=logging.INFO,
             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
             datefmt='%m-%d %H:%M',
-            encoding='utf-8',
             filename=LogFile,
             filemode='w'
     )

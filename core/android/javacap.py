@@ -2,12 +2,12 @@
 import struct
 from android.Yosemite import Yosemite
 import android.adb
-import logging
 from utils.snippet import on_method_ready, reg_cleanup
 from utils.nbsp import NonBlockingStreamReader
 from utils.safesocket import SafeSocket
+from utils.Logger import getLogger
 
-LOGGING = logging.getLogger("CocAssistant.javaCap")
+LOGGING = getLogger("CocAssistant.javaCap")
 
 class Javacap(Yosemite):
     """
@@ -91,7 +91,7 @@ class Javacap(Yosemite):
         proc.kill()
         self.adb.remove_forward("tcp:%s" % localport)
 
-    def get_frame_from_stream(self):
+    def get_frame_from_stream(self, stop = None):
         """
         Get frame from the stream
 
@@ -101,7 +101,7 @@ class Javacap(Yosemite):
         """
         if self.frame_gen is None:
             self.frame_gen = self.get_frames()
-        return self.frame_gen.send(None)
+        return self.frame_gen.send(stop)
 
     def teardown_stream(self):
         """

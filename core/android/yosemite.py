@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-import logging
 from utils.snippet import on_method_ready
 from Constant import YosemiteApk, YosemitePackage
 from utils.apkparser import APK
+from utils.Logger import getLogger
 
-LOGGING = logging.getLogger("CocAssistant.yosemite")
+LOGGING = getLogger("CocAssistant.Yosemite")
 
 class Yosemite(object):
     """Wrapper class of Yosemite.apk, used by javacap/recorder/yosemite_ime."""

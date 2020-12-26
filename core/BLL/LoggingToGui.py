@@ -1,11 +1,6 @@
 from logging.handlers import QueueHandler, QueueListener
-from PySide6.QtCore import QObject, Signal, Slot
 import logging
-
-class sendLoggingToQt(QObject) :
-    sendLogging = Signal(str)
-    def sendLog(self, str) :
-        self.sendLogging.emit(str)
+from .QtUtils import SendLoggingToQt
 
 class LoggingToGui (QueueListener) :
     def __init__(self, queue, m_sendLogging) :

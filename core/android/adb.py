@@ -8,7 +8,6 @@ import platform
 import warnings
 import subprocess
 import threading
-import logging
 from utils.snippet import retries, get_std_encoding, reg_cleanup, split_cmd
 from utils.compat import decode_path, raisefrom, proc_communicate_timeout, SUBPROCESS_FLAG
 from Constant import DefaultAdbPath
@@ -16,7 +15,10 @@ from six import PY3, text_type, binary_type, raise_from
 from six.moves import reduce
 from error import (AdbError, AdbShellError, CocAssistantError,
                                 DeviceConnectionError)
-LOGGING = logging.getLogger("CocAssistant.adb")
+
+from utils.Logger import getLogger
+
+LOGGING = getLogger("CocAssistant.ADB")
 
 class ADB(object):
     """adb client object class"""
