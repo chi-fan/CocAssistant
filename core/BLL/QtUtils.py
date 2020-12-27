@@ -4,7 +4,7 @@ import numpy as np
 
 class SendLoggingToQt(QObject) :
     sendLogging = Signal((str,), (bytes,), (np.ndarray))
-
+    stop = False
     def sendLog(self, text) :
         self.sendLogging.emit(text)
 
@@ -13,3 +13,7 @@ class SendLoggingToQt(QObject) :
 
     def sendLogArray(self, text) :
         self.sendLogging[np.ndarray].emit(text)
+
+    @Slot()
+    def close(self) :
+        self.stop = True

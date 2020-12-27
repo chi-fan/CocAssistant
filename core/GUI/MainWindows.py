@@ -13,6 +13,7 @@ LOGGING = getLogger("CocAssistant.MainWindows")
 
 class MyWidget(QtWidgets.QWidget) :
     sendSendExecute = QtCore.Signal(str)
+    signalStop = QtCore.Signal()
     def __init__(self):
         super(MyWidget, self).__init__()
         self.setWindowTitle(AppWindowsName)
@@ -28,6 +29,7 @@ class MyWidget(QtWidgets.QWidget) :
         self.layout.addWidget(self.textInput)
 
         self.setLayout(self.layout)
+        LOGGING.info("GUI start")
 
     @QtCore.Slot()
     def showTextInTextBrowser(self, text = None) :
@@ -46,6 +48,9 @@ class MyWidget(QtWidgets.QWidget) :
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
             self.refreshScreen()
+
+    def closeEvent(self, event) :
+        self.signalStop.emit()
 
 if __name__ == "__main__" :
     app = QApplication([])

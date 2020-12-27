@@ -28,6 +28,7 @@ if __name__ == "__main__" :
     widget = MyWidget()
 
     m_sendLoggingToQt2.sendLogging[np.ndarray].connect(widget.refreshScreen)
+    widget.signalStop.connect(m_sendLoggingToQt2.close)
 
     m_sendLoggingToQt.sendLogging.connect(widget.showTextInTextBrowser)
     widget.sendSendExecute.connect(m_execute.execture)

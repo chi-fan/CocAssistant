@@ -11,6 +11,7 @@ class LoggingToGui (QueueListener) :
             fmt='[%(asctime)s][%(levelname)s]<%(name)s> %(message)s',
             datefmt='%I:%M:%S'
         )
+        
     def handle(self, record) :
         record = self.prepare(record)
         if not self.respect_handler_level:

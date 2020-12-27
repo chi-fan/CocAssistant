@@ -20,7 +20,7 @@ class ScreenFrame (object) :
         self._thread = Timer(0.01, self._monitor)
         self._thread.start()
 
-    def stop(self):
+    def stop(self) :
         self._thread.cancel()
         self._thread = None
 
@@ -28,8 +28,9 @@ class ScreenFrame (object) :
         screen = self.getFrame()
         screen = utils.string_2_img(screen)
         # aircv.imwrite(".\\temp\\screen.jpg", screen, 10)
-        self.sendLoggingToQt.sendLogArray(screen)
-        self.start()
+        if not self.sendLoggingToQt.stop :
+            self.sendLoggingToQt.sendLogArray(screen)
+            self.start()
 
     def getFrame(self, stop = None) :
         try :
