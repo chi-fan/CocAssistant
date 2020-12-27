@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PySide6.QtCore import QObject, Signal, Slot
 import numpy as np
 

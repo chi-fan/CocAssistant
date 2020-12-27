@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from android.adb import ADB
 from android.javacap import Javacap
 import threading

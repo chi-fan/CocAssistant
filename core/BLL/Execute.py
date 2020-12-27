@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from utils.Logger import getLogger
 from PySide6.QtCore import QObject, Signal, Slot
 from .LoggingToGui import SendLoggingToQt

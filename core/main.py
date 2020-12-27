@@ -1,4 +1,4 @@
-# # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from utils.Logger import getLogger, initLogging
 from GUI.MainWindows import MyWidget

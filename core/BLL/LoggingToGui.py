@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from logging.handlers import QueueHandler, QueueListener
 import logging
 from .QtUtils import SendLoggingToQt

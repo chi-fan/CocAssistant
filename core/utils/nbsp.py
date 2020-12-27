@@ -1,4 +1,4 @@
-# _*_ coding:UTF-8 _*_
+# -*- coding: utf-8 -*-
 import time
 from threading import Thread, Event
 from six.moves import queue

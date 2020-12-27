@@ -1,4 +1,4 @@
-# _*_ coding:UTF-8 _*_
+# -*- coding: utf-8 -*-
 import socket
 import logging
 LOGGING = logging.getLogger(__name__)
