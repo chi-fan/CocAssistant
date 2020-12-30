@@ -32,3 +32,9 @@
 
 ## 环境安装
 运行 pip install -r requirements.txt 指令安装python虚拟环境来运行此程序
+
+## License
+
+See [LICENSE](LICENSE).
+
+Copyright © The OpenSTF Project. All Rights Reserved.
