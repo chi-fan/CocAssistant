@@ -17,7 +17,7 @@ class SafeSocket(object):
     def connect(self, tuple_hp):
         host, port = tuple_hp
         self.sock.connect((host, port))
-        LOGGING.debug("host : %d, port : %d", host, port)
+        LOGGING.debug(f"host : {host}, port : {port}")
 
     def send(self, msg):
         totalsent = 0
