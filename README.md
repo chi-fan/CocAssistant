@@ -37,4 +37,3 @@
 
 See [LICENSE](LICENSE).
 
-Copyright © The OpenSTF Project. All Rights Reserved.
